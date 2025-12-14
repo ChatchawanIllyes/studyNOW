@@ -2,27 +2,13 @@ import { Text, Pressable, StyleSheet, TouchableOpacity } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import MainBar from "./components/mainBar"
 import { useState, useEffect } from "react"
+import DisplayTimer from "./components/TimerDisplay"
 
 
 export default function MainHomePage() {
     //timer
-    const [timer, setTimer] = useState(0);
-
-    useEffect(() => {
-        const startTime = Date.now();
-
-        const updateTime = () => {
-        setTimer((Date.now() - startTime));
-    };
-
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-    }, [])
-
-
-   
-
-
+    
+    
 
     const styles = StyleSheet.create({
         startButton: {
@@ -57,9 +43,7 @@ export default function MainHomePage() {
                 START
             </Text>
           </TouchableOpacity>
-          <Text>
-            {timer / 1000}
-          </Text>
+          <DisplayTimer/>
            
             <MainBar/>
 
