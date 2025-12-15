@@ -1,40 +1,71 @@
 import { useState, useEffect } from "react";
-import { Text, View } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet} from "react-native";
 
 
 export default function DisplayTimer() {
 
 
-    const [timer, setTimer] = useState(0);
+    const [isRunning, setIsRunning] = useState(false);
+    const [seconds, setSeconds] = useState(0);
     
-        useEffect(() => {
-            const startTime = Date.now();
-    
-            const updateTime = () => {
-            setTimer((Date.now() - startTime));
-        };
-    
-        const interval = setInterval(updateTime, 1000);
+    useEffect(() => {
+        if (!isRunning) return;
+
+        const interval = setInterval(() => {
+            setSeconds(prev => prev + 1);
+         }, 1000);
+
         return () => clearInterval(interval);
-        }, [])
+    }, [isRunning]);
     
-        const formatTime = (totalMs: number) => {
-            const totalSeconds = Math.floor(totalMs / 1000)
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = Math.floor(totalSeconds % 60);
+    //formatted time
+    const formatTime = (totalSeconds: number) => {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = Math.floor(totalSeconds % 60);
+
+        const digits = (num: number) => num.toString().padStart(2, '0');
+        return `${digits(hours)}:${digits(minutes)}:${digits(seconds)}`
+    }
+
+    const formattedTime = formatTime(seconds)
+        const handlePress = () => {
+        setIsRunning(prev => {
+            console.log(isRunning ? "Stopped" : "Started");
+            return !prev;
+        }); 
+    };
     
-            const digits = (num: number) => num.toString().padStart(2, '0');
-            return `${digits(hours)}:${digits(minutes)}:${digits(seconds)}`
-        }
-    
-        const formattedTime = formatTime(timer)
+        const buttonText = isRunning ? "Stop" : "Start";
+        const statusMessage = isRunning ? "Timer is running..." : "Timer is stopped.";
     
     return (
         <View>
-            <Text>
-                {formattedTime}
-            </Text>
+            <TouchableOpacity onPress={handlePress} style={styles.startButton}>
+                <Text style={styles.startButtonText}>{buttonText}</Text>
+            </TouchableOpacity>
+
+            <Text>{formattedTime}</Text>
+
+            <Text style={styles.statusText}>{statusMessage}</Text>
         </View>
     )
-}
+};
+
+
+const styles = StyleSheet.create({
+    startButton: {
+    backgroundColor: "#000000",
+    padding: 8,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  startButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "800", 
+  },
+  statusText: {
+    marginBottom: 16,
+  },
+})
